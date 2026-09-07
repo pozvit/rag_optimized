@@ -1090,4 +1090,4 @@ python src/vector_pipeline.py && echo "INDEX OK"
 
 ## 15. Цикл оптимизации: baseline → улучшения → сравнение
 
-См. `OPTIMIZATION_REPORT.md`
+См. `results/OPTIMIZATION_REPORT.md`

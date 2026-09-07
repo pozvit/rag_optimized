@@ -1,0 +1,12 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Промежуточные и производные данные пайплайна
+data/prepared/
+data/chunks/
+data/embeddings/
+data/vector_store/
+data/qdrant_storage/

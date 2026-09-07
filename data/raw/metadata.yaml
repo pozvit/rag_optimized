@@ -1,0 +1,42 @@
+# Метаданные документов базы знаний.
+# Ключ — имя файла в data/raw/. Значения попадают в metadata каждого чанка
+# и в payload Qdrant, поэтому доступны при retrieval и показываются в ответе.
+#
+# defaults применяются к файлу, для которого нет отдельной записи.
+
+defaults:
+  document_name: "Без названия"
+  category: "uncategorized"
+  version: "n/a"
+  source_type: "internal_product_doc"
+
+documents:
+  01_ergo_business_simulator.pdf:
+    document_name: "ERGO — бизнес-симулятор принятия стратегических решений"
+    category: "products/leadership_development"
+    version: "2025-09"
+    source_type: "internal_product_doc"
+
+  02_sips_investment_planning.pdf:
+    document_name: "SIPS — Strategic Investment Planning Suite"
+    category: "products/strategic_investment_planning"
+    version: "2025-09"
+    source_type: "internal_product_doc"
+
+  03_aims_asset_management.pdf:
+    document_name: "AIMS — Asset Intelligence Management System 2.0"
+    category: "products/asset_management"
+    version: "2025-09"
+    source_type: "internal_product_doc"
+
+  04_ibp_integrated_business_planning.pdf:
+    document_name: "IBP — Интегрированное бизнес-планирование"
+    category: "products/integrated_planning"
+    version: "2025-06"
+    source_type: "internal_product_doc"
+
+  05_integral360_infrastructure_design.pdf:
+    document_name: "Integral 360 — концептуальное проектирование индустриально-логистических объектов"
+    category: "products/infrastructure_projects"
+    version: "2025-09"
+    source_type: "internal_product_doc"

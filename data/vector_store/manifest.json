@@ -1,0 +1,92 @@
+{
+  "run_id": "a746bc2f-be7b-4910-bb8d-dca9174b44e4",
+  "timestamp": "2026-09-07T11:55:12Z",
+  "config_file": "config/vector_store.yaml",
+  "config": {
+    "paths": {
+      "input_jsonl": "data/embeddings/embeddings.jsonl",
+      "output_dir": "data/vector_store",
+      "qdrant_storage": "data/qdrant_storage"
+    },
+    "vector_store": {
+      "type": "qdrant",
+      "collection_name": "rag_documents",
+      "vector_size": 384,
+      "distance": "Cosine",
+      "recreate_collection": true,
+      "batch_size": 64
+    },
+    "search": {
+      "top_k": 5,
+      "test_queries": [
+        "Сколько сегментов рынка микроэлектроники в игре ERGO?",
+        "Какие эффекты даёт внедрение IBP?",
+        "Что входит в цифровое ядро AIMS?"
+      ],
+      "use_existing_vectors": true,
+      "model_name": "intfloat/multilingual-e5-small"
+    }
+  },
+  "vector_store_type": "qdrant",
+  "collection_name": "rag_documents",
+  "input_file": "data/embeddings/embeddings.jsonl",
+  "input_total_lines": 58,
+  "input_blank_lines": 0,
+  "input_data_lines": 58,
+  "input_valid_records": 58,
+  "input_error_records": 0,
+  "input_error_details": [],
+  "indexed_points": 58,
+  "validation": {
+    "total_lines_in_file": 58,
+    "blank_lines_in_file": 0,
+    "data_lines_in_file": 58,
+    "valid_records_loaded": 58,
+    "error_records_in_file": 0,
+    "counters_consistent": true,
+    "all_input_records_valid": true,
+    "actual_points_in_qdrant": 58,
+    "count_match": true,
+    "count_match_vs_data_lines": true,
+    "vector_size_expected": 384,
+    "vector_size_actual": 384,
+    "vector_size_match": true,
+    "distance_metric_expected": "Cosine",
+    "distance_metric_actual": "COSINE",
+    "distance_metric_match": true,
+    "all_embeddings_have_same_dimension": true,
+    "payload_checked_points": 5,
+    "payload_fields_present": true,
+    "payload_required_fields": [
+      "chunk_id",
+      "document_id",
+      "text",
+      "source",
+      "section",
+      "embedding_model",
+      "embedding_dimensions"
+    ],
+    "search_works": true,
+    "search_returned_hits": 1,
+    "errors": [],
+    "index_is_valid": true
+  },
+  "index_is_valid": true,
+  "search_tests_count": 3,
+  "search_relevance_summary": [
+    {
+      "test_id": "05d8db1b-5100-5fbe-9f43-1eda62b42c18",
+      "relevance_judgment": "high"
+    },
+    {
+      "test_id": "debdc9f0-ba92-5a58-a737-228a9236cb52",
+      "relevance_judgment": "high"
+    },
+    {
+      "test_id": "b2d4a414-4f7a-52dd-856f-495b0da23290",
+      "relevance_judgment": "high"
+    }
+  ],
+  "validation_file": "data/vector_store/validation.json",
+  "search_results_file": "data/vector_store/search_results.json"
+}

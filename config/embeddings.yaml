@@ -1,0 +1,15 @@
+paths:
+  input_jsonl: "data/chunks/chunks.jsonl"
+  output_jsonl: "data/embeddings/embeddings.jsonl"
+
+embedding:
+  model_name: "intfloat/multilingual-e5-small"  # мультиязычная модель: база знаний на русском
+  provider: "sentence-transformers"
+  dimensions: 384                               # сверяется с фактической размерностью модели
+  batch_size: 32
+  max_tokens: 512
+  passage_prefix: "passage: "                   # требование семейства E5 для документов
+  normalize_embeddings: true                    # нормируем векторы -> cosine == dot
+
+export:
+  include_text: true

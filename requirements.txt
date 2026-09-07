@@ -1,0 +1,6 @@
+PyYAML==6.0.1
+sentence-transformers>=2.7
+torch>=1.9.0
+PyPDF2>=3.0.0
+qdrant-client>=1.10,<2.0
+reportlab>=4.0        # нужен только для tools/md_to_pdf.py (сборка PDF базы знаний)

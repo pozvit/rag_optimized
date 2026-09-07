@@ -1,0 +1,19 @@
+paths:
+  raw_dir: "data/raw"                       # папка с исходными файлами базы знаний (PDF)
+  prepared_dir: "data/prepared"             # папка для очищенных документов
+  metadata_file: "data/raw/metadata.yaml"   # sidecar с document_name / category / version
+
+cleaning:
+  remove_extra_spaces: true         # удалять множественные пробелы и табуляции
+  remove_empty_lines: true          # удалять пустые строки
+  remove_control_characters: true   # удалять управляющие символы (кроме перевода строки)
+  unwrap_pdf_line_breaks: true      # склеивать строки, разорванные вёрсткой PDF (важно для чанкинга по предложениям)
+
+normalization:
+  unicode_form: "NFKC"              # форма нормализации Unicode
+  normalize_line_endings: true      # приводить переносы строк к \n
+  lowercase: false                  # регистр не трогаем: E5-модели чувствительны к нему
+
+export:
+  format: "jsonl"
+  filename: "prepared_documents.jsonl"

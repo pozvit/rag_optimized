@@ -1,0 +1,21 @@
+paths:
+  input_jsonl: "data/embeddings/embeddings.jsonl"
+  output_dir: "data/vector_store"
+  qdrant_storage: "data/qdrant_storage"
+
+vector_store:
+  type: "qdrant"
+  collection_name: "rag_documents"
+  vector_size: 384                 # multilingual-e5-small
+  distance: "Cosine"
+  recreate_collection: true
+  batch_size: 64
+
+search:
+  top_k: 5
+  test_queries:
+    - "Сколько сегментов рынка микроэлектроники в игре ERGO?"
+    - "Какие эффекты даёт внедрение IBP?"
+    - "Что входит в цифровое ядро AIMS?"
+  use_existing_vectors: true       # true — self-match по существующим векторам (проверка целостности индекса)
+  model_name: "intfloat/multilingual-e5-small"

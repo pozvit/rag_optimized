@@ -94,9 +94,9 @@ def render_markdown(records: List[Dict[str, Any]], meta: Dict[str, Any]) -> str:
         answer = rec.get('answer') or f"_[ответ не получен] {rec.get('error')}_"
         lines.append(answer)
         lines.append("")
-        lines.append("**Оценка:** _(корректно / частично корректно / некорректно — заполните после прогона)_")
+        lines.append("**Оценка:**")
         lines.append("")
-        lines.append("**Комментарий:** _(почему поставлена такая оценка)_")
+        lines.append("**Комментарий:**")
         lines.append("")
         lines.append("---")
         lines.append("")
@@ -148,23 +148,20 @@ def render_conclusion(records: List[Dict[str, Any]], meta: Dict[str, Any]) -> Li
         refused = "да" if refusal_marker.lower() in answer.lower() else "нет"
         lines.append(
             f"| {rec['id']} | {rec.get('type', '—')} | `{top_doc}` | {top_score} | {refused} | "
-            f"_заполните_ |"
+            f"|"
         )
 
     lines.extend([
         "",
-        "Столбец «Оценка» заполняется вручную: корректно / частично корректно / некорректно.",
-        "Основание — поле «Ожидаемый ответ» под каждым вопросом выше.",
+        "Шкала оценки: корректно / частично корректно / некорректно.",
         "",
         "## Какие вопросы отработали хорошо",
         "",
-        "_Перечислите вопросы, где нужный документ попал в топ выдачи, а ответ полон и совпал",
         "с ожидаемым. Для каждого укажите score первого фрагмента и имя файла — они есть",
         "в сводке выше._",
         "",
         "## Где пайплайн ошибся или дал неполный ответ",
         "",
-        "_Опишите фактические расхождения с ожидаемым ответом: потерянные пункты перечислений,",
         "попадание чанков из чужого документа, придуманные числа. Если таких случаев не было —",
         "напишите это прямо и приведите как аргумент значения score из сводки._",
         "",
@@ -259,7 +256,7 @@ def main() -> int:
     # Модель и подключение к Qdrant инициализируются один раз на весь прогон
     retriever = Retriever(config)
     llm, llm_init_error = create_client(config.get('llm', {}))
-    llm_state = llm.describe() if llm else f"LLM не сконфигурирован: {llm_init_error}"
+    llm_state = f"{llm.provider}: {llm.model.rsplit('/', 2)[-2]}/{llm.model.rsplit('/', 1)[-1]}" if llm else f"LLM не сконфигурирован: {llm_init_error}"
     print(retriever.model_name, "|", llm_state)
 
     records: List[Dict[str, Any]] = []

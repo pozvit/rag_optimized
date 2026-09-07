@@ -97,6 +97,88 @@ def chunk_by_paragraphs(text: str, chunk_size: int, overlap: int,
     return chunks
 
 
+# Заголовок раздела: номер вида «8.», «8.1.», «8.1.2.» в начале строки,
+# затем пробел и слово с заглавной буквы. После нормализации PDF заголовки
+# остаются на отдельных строках, поэтому якорь по началу строки надёжен.
+HEADING_RE = re.compile(r'^(\d{1,2}(?:\.\d{1,2})*)\.\s+(\S.*)$', re.MULTILINE)
+
+
+def split_sections(text: str) -> List[Dict[str, str]]:
+    """
+    Делит текст на разделы по строкам-заголовкам.
+
+    Возвращает список {'heading': ..., 'body': ...}. Текст до первого заголовка
+    попадает в раздел с пустым heading — обычно это титул документа.
+    """
+    matches = list(HEADING_RE.finditer(text))
+    if not matches:
+        return [{'heading': '', 'body': text}]
+
+    sections: List[Dict[str, str]] = []
+    preamble = text[:matches[0].start()].strip()
+    if preamble:
+        sections.append({'heading': '', 'body': preamble})
+
+    for i, m in enumerate(matches):
+        end = matches[i + 1].start() if i + 1 < len(matches) else len(text)
+        sections.append({
+            'heading': m.group(0).strip(),
+            'body': text[m.end():end].strip(),
+        })
+    return sections
+
+
+def chunk_by_sections(text: str, chunk_size: int, overlap: int,
+                      split_long: bool = True) -> List[str]:
+    """
+    Чанкинг по разделам документа.
+
+    Решает задачу атрибуции: показатели, перечисленные внутри раздела, остаются
+    в одном чанке с его заголовком. При нарезке предложениями заголовок мог
+    оказаться в предыдущем чанке, и числа теряли привязку к кейсу.
+
+    Правила:
+    - раздел целиком помещается в chunk_size — становится одним чанком;
+    - раздел длиннее — режется по предложениям, и заголовок ПОВТОРЯЕТСЯ
+      в начале каждой части, чтобы привязка не терялась;
+    - подряд идущие короткие разделы склеиваются, пока укладываются в chunk_size,
+      иначе документ рассыпается на десятки мелких фрагментов.
+    """
+    chunks: List[str] = []
+    pending: List[str] = []
+    pending_len = 0
+
+    def flush() -> None:
+        nonlocal pending, pending_len
+        if pending:
+            chunks.append('\n'.join(pending))
+            pending, pending_len = [], 0
+
+    for section in split_sections(text):
+        heading, body = section['heading'], section['body']
+        full = f"{heading}\n{body}".strip() if heading else body
+        if not full:
+            continue
+
+        if len(full) <= chunk_size:
+            # короткий раздел: копим, пока влезает
+            if pending_len + len(full) > chunk_size:
+                flush()
+            pending.append(full)
+            pending_len += len(full) + 1
+            continue
+
+        # длинный раздел: сбрасываем накопленное и режем с повтором заголовка
+        flush()
+        prefix = f"{heading} " if heading else ""
+        budget = max(1, chunk_size - len(prefix))
+        for part in chunk_by_sentences(body, budget, overlap, split_long):
+            chunks.append(f"{prefix}{part}".strip())
+
+    flush()
+    return chunks
+
+
 def chunk_document(text: str, strategy: str, chunk_size: int, overlap: int,
                    split_long: bool = True) -> List[Dict[str, Any]]:
     """Разбивает текст документа на чанки согласно выбранной стратегии."""
@@ -104,8 +186,11 @@ def chunk_document(text: str, strategy: str, chunk_size: int, overlap: int,
         chunk_texts = chunk_by_sentences(text, chunk_size, overlap, split_long)
     elif strategy == 'paragraph':
         chunk_texts = chunk_by_paragraphs(text, chunk_size, overlap, split_long)
+    elif strategy == 'section':
+        chunk_texts = chunk_by_sections(text, chunk_size, overlap, split_long)
     else:
-        raise ValueError(f"Unsupported strategy: {strategy}. Доступно: sentence, paragraph")
+        raise ValueError(
+            f"Unsupported strategy: {strategy}. Доступно: sentence, paragraph, section")
 
     result = []
     for idx, chunk_text in enumerate(t for t in chunk_texts if t.strip()):
